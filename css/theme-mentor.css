@@ -1,0 +1,17 @@
+.wrap h2 {
+	margin-bottom: 15px;
+}
+.tm_report_row {
+	font-size: 16px;
+	line-height: 24px;
+	margin-bottom: 10px;
+}
+.tm_message {
+	color: gray;
+}
+.tm_file, .tm_line {
+	font-weight: bold;
+}
+.tm_snippet {
+	font-style: italic;
+}
