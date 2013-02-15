@@ -22,6 +22,7 @@ class Theme_Mentor {
 	private $templates = array();
 	private $includes = array();
 	private $theme_path = '';
+	public static $validations = array();
 	
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'theme_mentor_page' ) );
@@ -44,8 +45,16 @@ class Theme_Mentor {
 		}
 		$this->includes[] = $this->theme_path . 'functions.php';
 		
+		// Include check files
 		include TM_INC_PATH . 'general-theme-validations.php';
 		$general_validations = new General_Theme_Validations();
+		
+		// Include complex checks
+		include TM_PLUGIN_PATH . 'theme-mentor-executor.php';
+		$dir = 'inc/complex';
+		foreach (glob(dirname(__FILE__). "/{$dir}/*.php") as $file) {
+			include $file;
+		}
 		
 		// iterate all templates
 		foreach( $this->templates as $index => $template ) {
@@ -63,6 +72,10 @@ class Theme_Mentor {
 			
 			foreach( $general_validations->template_validations as $pattern => $message ) {
 				$this->iterate_data( $pattern, $message, $template_unique_only, $file );
+			}
+			
+			foreach( self::$validations as $validation ) {
+				$validation->crawl( $template, $file );
 			}
 		}
 		
@@ -82,6 +95,16 @@ class Theme_Mentor {
 				
 			foreach( $general_validations->include_validations as $pattern => $message ) {
 				$this->iterate_data( $pattern, $message, $functional_unique_only, $file );
+			}
+		}
+		
+		// display complex validations errors
+		foreach( self::$validations as $validation ) {
+			$validation->execute();
+			$validation_description = $validation->get_description();
+
+			if( ! empty( $validation_description ) ) {
+				echo $validation_description;
 			}
 		}
 	}

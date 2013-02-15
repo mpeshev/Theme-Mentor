@@ -10,16 +10,16 @@
  */
 interface Theme_Mentor_Executor {
 		/**
-		 * Reading the file and collecting data in an array
-		 * @param unknown_type $file
+		 * Reading the file (or files, if called a couple times) and collecting data in an array
+		 * @param string $filename filename
+		 * @param string $file content of the file
 		 */
-		public function crawl( $file );
+		public function crawl( $filename, $file );
 		
 		/**
-		 * Aggregating the data if needed, like stats, some array management, etc
-		 * @param unknown_type $file
+		 * Aggregating the data if needed after the iteration process, like stats, some array management, etc
 		 */
-		public function execute( $file );
+		public function execute( );
 		
 		/**
 		 * Describe to the regular human being what's going on, if anything
