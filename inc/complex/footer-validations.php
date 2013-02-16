@@ -60,7 +60,7 @@ class Footer_Validations implements Theme_Mentor_Executor {
 		} else {
 			$error_text = __( 'No wp_footer or closing body tag found', 'dx_theme_mentor' );
 			$this->error_message[] = sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span></div>',
-					$this->error_text, 'footer.php' );
+					$error_text, 'footer.php' );
 		}
 	}
 	

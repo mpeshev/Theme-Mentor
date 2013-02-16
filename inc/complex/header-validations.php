@@ -5,7 +5,7 @@ private $wp_head_found = false;
 	
 	// random defaults - need to compare further
 	private $wp_head_line = -1;
-	private $header_close_tag_line = -1;
+	private $head_close_tag_line = -1;
 	
 	private $file = array();
 	
@@ -121,7 +121,7 @@ private $wp_head_found = false;
 					$error_text = __( 'wp_head call should be right before the closing head tag.', 'dx_theme_mentor' );
 					
 					$this->error_message[] = sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span>, line <span class="tm_line">%d</span></div>',
-							$error_text, 'header.php', $this->header_close_tag_line );
+							$error_text, 'header.php', $this->head_close_tag_line );
 				}
 			}
 		} else {

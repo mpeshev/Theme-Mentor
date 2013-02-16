@@ -3,7 +3,10 @@
 * Mark all <link> tags in template files
 * Mark all <script> tags in template files
 * Warn about query_posts() usage
-* capital_P_dangit control (disallow any WordPress spelling other than WordPress as is)
+* capital_P_dangit control (disallow any WordPress spelling other than WordPress as is - that is WORDPRESS and Wordpress, ugh)
+* wp_deregister_script('jquery') is forbidden
+* wp_dequeue_script('jquery') is forbidden
+* prevent global $data; call as a common troublemaker (props @pippinsplugins)
 
 == Complex ==
 
