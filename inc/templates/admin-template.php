@@ -1,4 +1,4 @@
-<p><?php _e(' Pick a theme from your theme folder', 'dx_theme_mentor' ); ?></p>
+<p><?php _e(' Pick a theme from your theme directories.', 'dx_theme_mentor' ); ?></p>
 
 <div id="theme_mentor_admin_wrapper">
 	<form id="dx_theme_mentor_form" action="" method="POST">
