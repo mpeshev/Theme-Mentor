@@ -67,10 +67,12 @@ class Theme_Mentor {
 		// swap functions.php as it's include-alike
 		$functions_file = $this->theme_path . 'functions.php';
 		foreach( $this->templates as $index => $template ) {
-			if( $template === $functions_file )
+			if( $template === $functions_file ) {
 				unset( $this->templates[ $index ] );
+				$this->includes[] = $this->theme_path . 'functions.php';
+			}
 		}
-		$this->includes[] = $this->theme_path . 'functions.php';
+		
 		
 		// Include check files
 		include TM_INC_PATH . 'general-theme-validations.php';
