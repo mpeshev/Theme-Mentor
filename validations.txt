@@ -1,0 +1,17 @@
+== Simple == 
+
+* Mark all <link> tags in template files
+* Mark all <script> tags in template files
+* Warn about query_posts() usage
+* capital_P_dangit control (disallow any WordPress spelling other than WordPress as is)
+
+== Complex ==
+
+=== header.php ===
+
+* Make sure that wp_head is before </head>
+* Ensure that wp_title(...) is called within <title> and </title> tags
+
+=== footer.php ===
+
+* Make sure that wp_footer is before </body> 
