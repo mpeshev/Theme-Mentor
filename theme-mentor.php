@@ -5,9 +5,31 @@
  * It's using different approaches to monitor for common problems regarding theme reviews from the
  * WordPress Theme Reviewers Team. It is prone to fault analysis, so use only as a reference for improving
  * your code base even further.
+ * Plugin URI: https://github.com/mpeshev/Theme-Mentor
+ * Version: 0.1
  * Author: nofearinc
+ * Author URI: http://devwp.eu/
+ * License: GPLv2 or later
  * 
  */
+/*
+ * Copyright (C) 2013 Mario Peshev
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * 
+ * */
 
 define( 'TM_PLUGIN_PATH', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'TM_PLUGIN_URL', trailingslashit( plugin_dir_url( __FILE__ ) ) );
@@ -17,6 +39,12 @@ define( 'TM_INC_URL', trailingslashit( TM_PLUGIN_URL . 'inc' ) );
 
 // if isset the option for complex checks, load them as well in the process of evaluation
 
+/**
+ * The main class for the plugin, initializing everything needed and including all tests
+ * 
+ * @author nofearinc
+ *
+ */
 class Theme_Mentor {
 	
 	private $templates = array();
@@ -31,8 +59,6 @@ class Theme_Mentor {
 	}
 	
 	public function run_tests( ) {
-		// $this->theme_path = trailingslashit( '/opt/lampp/htdocs/wpreview/wp-content/themes/tampa' ); // TODO: get theme path from options
-		
 		// all the heavy lifting for picking up proper files from the theme folder
 		// for templates and includes, that is
 		$this->iterate_theme_folder( $this->theme_path, 0 );
@@ -117,6 +143,9 @@ class Theme_Mentor {
 		add_action( 'admin_print_styles-' . $page, array( $this, 'styles_theme_mentor' ) );
 	}
 	
+	/**
+	 * Admin page callback
+	 */
 	public function theme_mentor_page_cb() {
 		if( ! current_user_can( 'manage_options' ) ) {
 			wp_die( __( 'We all know you shouldn\'t be here', 'dx_theme_mentor' ) );
@@ -159,8 +188,8 @@ class Theme_Mentor {
 	
 	/**
 	 * Iterate theme folder and assign templates and includes
-	 * @param unknown_type $folder
-	 * @param unknown_type $level
+	 * @param string $folder folder path
+	 * @param int $level depth of the nesting
 	 */
 	public function iterate_theme_folder( $folder, $level = 0 ) {
 		// get all templates
@@ -213,9 +242,13 @@ class Theme_Mentor {
 	// lookout for the errors
 	// admin panel for theme list
 	
+	/**
+	 * Enqueue styles for admin
+	 */
 	public function styles_theme_mentor() {
 		wp_enqueue_style( 'theme-mentor', TM_PLUGIN_URL . 'css/theme-mentor.css' );
 	}
 }
 
+// Make things happen.
 new Theme_Mentor();
