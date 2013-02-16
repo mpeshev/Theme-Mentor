@@ -69,7 +69,7 @@ private $wp_head_found = false;
 		}
 		
 		return sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span>, line <span class="tm_line">%d</span></div>',
-			$this->error_message, 'header.php', $this->head_close_tag_line );
+			$this->error_message, 'header.php', $this->header_close_tag_line );
 	}
 	
 	
