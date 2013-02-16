@@ -15,28 +15,8 @@ private $wp_head_found = false;
 		if( false !== strpos( $filename, 'header.php') ) {
 			$this->file = $file;
 			
-			// do the header twist
-			$lines_found = preg_grep( '/wp_head\(\)/', $file );
-			
-			// wp_head found
-			// TODO: we need to abstract these 5-liners with 1-liner helper function.
-			if( ! empty( $lines_found ) ) {
-				$this->wp_head_found = true;
-				foreach( $lines_found as $line => $snippet ) {
-					$this->wp_head_line = $line;				
-				}
-			}
-			
-			// lookup for closing body tag
-			if( $this->wp_head_found ) {
-				$lines_found = preg_grep( '/<\/head>/', $file );
-				
-				if( ! empty( $lines_found ) ) {
-					foreach( $lines_found as $line => $snippet ) {
-						$this->head_close_tag_line = $line;
-					}
-				}
-			}
+			$this->manage_wphead_placement( $file );
+			$this->does_wp_title_exist( $file );
 		} 
 	}
 	
@@ -44,20 +24,7 @@ private $wp_head_found = false;
 	 * Aggregating the data if needed, like stats, some array management, etc
 	*/
 	public function execute( ) {
-		if( -1 != $this->wp_head_line && -1 != $this->head_close_tag_line ) {
-			$diff = $this->head_close_tag_line - $this->wp_head_line;
-			if( $diff < 0 || $diff > 1 ) {
-				// edge case for closing PHP tag between wp_footer and closing body
-				if( $diff > 2 ||
-						empty( $this->file ) || 
-						! isset( $this->file[$this->head_close_tag_line - 1] ) ||
-						false === strpos( $this->file[$this->head_close_tag_line - 1], '?>' ) ) {
-					$this->error_message = __( 'wp_head call should be right before the closing head tag.', 'dx_theme_mentor' );
-				} 
-			}
-		} else {
-			$this->error_message = __( 'No wp_head or closing head tag found', 'dx_theme_mentor' );
-		}
+		$this->aggregate_wphead_placement();
 	}
 	
 	/**
@@ -68,10 +35,102 @@ private $wp_head_found = false;
 			return '';
 		}
 		
-		return sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span>, line <span class="tm_line">%d</span></div>',
-			$this->error_message, 'header.php', $this->header_close_tag_line );
+		$out = '';
+		if( is_array( $this->error_message ) ) {
+			foreach( $this->error_message as $error ) {
+				$out .= $error;
+			}
+		}
+		
+		return $out;
 	}
 	
+	/*
+	 * 
+	 * Crawler methods
+	 * 
+	 */
+	
+	/**
+	 * Can we find wphead before the closing </head> tag?
+	 * @param string $file content
+	 */
+	private function manage_wphead_placement( $file ) {
+		// do the header twist
+		$lines_found = preg_grep( '/wp_head\(\)/', $file );
+			
+		// wp_head found
+		// TODO: we need to abstract these 5-liners with 1-liner helper function.
+		if( ! empty( $lines_found ) ) {
+			$this->wp_head_found = true;
+			foreach( $lines_found as $line => $snippet ) {
+				$this->wp_head_line = $line;
+			}
+		}
+			
+		// lookup for closing body tag
+		if( $this->wp_head_found ) {
+			$lines_found = preg_grep( '/<\/head>/', $file );
+		
+			if( ! empty( $lines_found ) ) {
+				foreach( $lines_found as $line => $snippet ) {
+					$this->head_close_tag_line = $line;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Does it really? Hmm...
+	 * @param string $file content, check if wp_title() is between <title> and </title>
+	 */
+	private function does_wp_title_exist( $file ) {
+		// two steps, don't bother with file_get_contents for this
+		$lines_found = preg_grep( '/<title(.*)>(.*)<\/title>/', $file );
+			
+		// title found
+		if( ! empty( $lines_found ) && is_array( $lines_found ) ) {
+			foreach( $lines_found as $line => $snippet ) {
+				if( false === strpos( $snippet, 'wp_title(') ) {
+					$error_text = __( 'Missing wp_title() hook inside of title tags', 'dx_theme_mentor' );
+					$this->error_message[] = sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span>, line <span class="tm_line">%d</span></div>',
+							$error_text, 'header.php', $line );
+				}
+			}
+		}
+	}
+	
+	/*
+	 *
+	* Aggregating methods
+	*
+	*/
+	
+	/**
+	 * Manage the wphead placement factor 
+	 */
+	private function aggregate_wphead_placement( ) {
+		if( -1 != $this->wp_head_line && -1 != $this->head_close_tag_line ) {
+			$diff = $this->head_close_tag_line - $this->wp_head_line;
+			if( $diff < 0 || $diff > 1 ) {
+				// edge case for closing PHP tag between wp_footer and closing body
+				if( $diff > 2 ||
+						empty( $this->file ) ||
+						! isset( $this->file[$this->head_close_tag_line - 1] ) ||
+						false === strpos( $this->file[$this->head_close_tag_line - 1], '?>' ) ) {
+					$error_text = __( 'wp_head call should be right before the closing head tag.', 'dx_theme_mentor' );
+					
+					$this->error_message[] = sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span>, line <span class="tm_line">%d</span></div>',
+							$error_text, 'header.php', $this->header_close_tag_line );
+				}
+			}
+		} else {
+			$error_text = __( 'No wp_head or closing head tag found', 'dx_theme_mentor' );
+			$this->error_message[] = sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span></div>',
+					$error_text, 'header.php');
+		}
+
+	}
 	
 }
 

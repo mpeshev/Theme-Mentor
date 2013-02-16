@@ -52,11 +52,15 @@ class Footer_Validations implements Theme_Mentor_Executor {
 						empty( $this->file ) || 
 						! isset( $this->file[$this->body_close_tag_line - 1] ) ||
 						false === strpos( $this->file[$this->body_close_tag_line - 1], '?>' ) ) {
-					$this->error_message = __( 'wp_footer call should be right before the closing body tag.', 'dx_theme_mentor' );
+					$error_text = __( 'wp_footer call should be right before the closing body tag.', 'dx_theme_mentor' );
+					$this->error_message[] = sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span>, line <span class="tm_line">%d</span></div>',
+			$error_text, 'footer.php', $this->body_close_tag_line );
 				} 
 			}
 		} else {
-			$this->error_message = __( 'No wp_footer or closing body tag found', 'dx_theme_mentor' );
+			$error_text = __( 'No wp_footer or closing body tag found', 'dx_theme_mentor' );
+			$this->error_message[] = sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span></div>',
+					$this->error_text, 'footer.php' );
 		}
 	}
 	
@@ -68,8 +72,14 @@ class Footer_Validations implements Theme_Mentor_Executor {
 			return '';
 		}
 		
-		return sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span>, line <span class="tm_line">%d</span></div>',
-			$this->error_message, 'footer.php', $this->body_close_tag_line );
+		$out = '';
+		if( is_array( $this->error_message ) ) {
+			foreach( $this->error_message as $error ) {
+				$out .= $error;
+			}
+		}
+		
+		return $out;
 	}
 	
 }
