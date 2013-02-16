@@ -54,6 +54,7 @@ class Theme_Mentor {
 	
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'theme_mentor_page' ) );
+		add_action( 'dx_theme_mentor_before_tests_list', array( $this, 'display_theme_name_tested' ) );
 		// TODO: temporary
 // 		$this->do_everything();
 	}
@@ -162,6 +163,8 @@ class Theme_Mentor {
 		echo '<div id="icon-edit" class="icon32 icon32-base-template"><br></div>';
 		echo '<h2>' . __( 'Theme Mentor', 'dx_theme_mentor' ) . '</h2>';
 		
+		do_action( 'dx_theme_mentor_before_tests_list' );
+		
 		// is the form submitted
 		if( isset( $_POST['dx_theme'] ) ) {
 			$theme_name = $_POST['dx_theme'];
@@ -247,6 +250,13 @@ class Theme_Mentor {
 	 */
 	public function styles_theme_mentor() {
 		wp_enqueue_style( 'theme-mentor', TM_PLUGIN_URL . 'css/theme-mentor.css' );
+	}
+	
+	public function display_theme_name_tested( ) {
+		if( ! empty( $_POST['dx_theme'] ) ) {
+			$testing_word = __('Testing', 'dx_theme_mentor');
+			printf('<h2>%s %s...</h2>', $testing_word, $_POST['dx_theme']); 
+		}
 	}
 }
 
