@@ -54,7 +54,7 @@ class Footer_Validations implements Theme_Mentor_Executor {
 						false === strpos( $this->file[$this->body_close_tag_line - 1], '?>' ) ) {
 					$error_text = __( 'wp_footer call should be right before the closing body tag.', 'dx_theme_mentor' );
 					$this->error_message[] = sprintf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span>, line <span class="tm_line">%d</span></div>',
-			$error_text, 'footer.php', $this->body_close_tag_line );
+			$error_text, 'footer.php', $this->body_close_tag_line + 1 );
 				} 
 			}
 		} else {

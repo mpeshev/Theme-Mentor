@@ -89,7 +89,7 @@ class Theme_Mentor {
 			$template_unique_only = str_replace( $this->theme_path , '',  $template );
 				
 			// read the files, keep the file number as it matters, you know
-			$file = file( $template , FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+			$file = file( $template , FILE_IGNORE_NEW_LINES );
 			if( false === $file ) { continue; }
 				
 			// General
@@ -112,7 +112,7 @@ class Theme_Mentor {
 			$functional_unique_only = str_replace( $this->theme_path , '',  $functional );
 		
 			// read the files, keep the file number as it matters, you know
-			$file = file( $functional , FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+			$file = file( $functional , FILE_IGNORE_NEW_LINES );
 			if( false === $file ) { continue; }
 		
 			// General
@@ -235,7 +235,7 @@ class Theme_Mentor {
 		if( ! empty( $lines_found ) ) {
 			foreach( $lines_found as $line => $snippet ) {
 				printf( '<div class="tm_report_row"><span class="tm_message">%s</span> at file <span class="tm_file">%s</span>, line <span class="tm_line">%d</span>: <span class="tm_snippet">%s</span></div>', 
-						$message, $file_path, $line, esc_html( $snippet ) );
+						$message, $file_path, $line + 1, esc_html( $snippet ) );
 			}
 		}
 	}
