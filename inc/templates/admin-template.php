@@ -13,6 +13,8 @@
 		<p>
 			Extra options (if any, like complex enabled)
 		</p>
-		<input type="submit" value="<?php _e( 'Do the Twist!', 'dx_theme_mentor' ); ?>" />
+		<?php
+		submit_button( __( 'Do the Twist!', 'dx_theme_mentor' ) );
+		?>
 	</form> <!-- end of #dx_theme_mentor -->
 </div>
